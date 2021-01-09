@@ -3,10 +3,9 @@ import { useMemo, useState } from "react"
 import { Editable, Slate, withReact } from 'slate-react'
 import { createEditor, Node } from "slate"
 
-export default function SlateEditor() {
+export function S1() {
   const editor = useMemo(() => withReact(createEditor()), [])
   const [value, setValue] = useState<Node[]>([{
-    type: 'paragraph',
     children: [{
       text: 'Hello Slate'
     }]
