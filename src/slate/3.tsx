@@ -29,12 +29,7 @@ export function S3() {
       <button onClick={() => {
         Transforms.setNodes(editor, { type: 'h1' })
       }}>
-        H1
-      </button>
-      <button onClick={() => {
-        Transforms.setNodes(editor, { type: 'h2' })
-      }}>
-        H2
+        h1
       </button>
       <Editable
         renderElement={renderElement}

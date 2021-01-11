@@ -19,7 +19,7 @@ const slate = [S1, S2, S3];
 const steps = [
   'Basic',
   'Basic Text Formatting',
-  'Block Block Formatting'
+  'Block Formatting'
 ]
 
 export default function App() {
