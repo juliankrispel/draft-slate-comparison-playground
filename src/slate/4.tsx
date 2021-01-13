@@ -1,10 +1,18 @@
-import React, { CSSProperties, useCallback, useEffect } from 'react'
+import React, {  } from 'react'
 import { useMemo, useState } from "react"
-import { Editable, RenderElementProps, RenderLeafProps, Slate, useFocused, useSelected, withReact } from 'slate-react'
+import { Editable, RenderElementProps, Slate, useFocused, useSelected, withReact } from 'slate-react'
 import { createEditor, Editor, Node, Transforms } from "slate"
+import { withHistory } from 'slate-history'
 import { css } from '@emotion/css'
+import { toDataURL } from '../utils/toDataUrl'
 
-const Element = (props: RenderElementProps) => {
+type ElementProps = RenderElementProps & {
+  imageStore: {
+    [key: string]: string | null
+  }
+}
+
+const Element = (props: ElementProps) => {
   const { attributes, children, element } = props
 
   switch (element.type) {
@@ -15,14 +23,16 @@ const Element = (props: RenderElementProps) => {
   }
 }
 
-const ImageElement = ({ attributes, children, element }: RenderElementProps) => {
+const ImageElement = ({ attributes, children, element, imageStore }: ElementProps) => {
   const selected = useSelected()
   const focused = useFocused()
-  if (!element.url) {
+  const src = imageStore[element.entity as string]
+  if (!src) {
     return <div {...attributes}>
       <div contentEditable={false}>
         Loading
       </div>
+      {children}
     </div>
   }
 
@@ -31,7 +41,7 @@ const ImageElement = ({ attributes, children, element }: RenderElementProps) => 
       <div contentEditable={false}>
         <img
           alt="Cat"
-          src={element.url as string}
+          src={src}
           className={css`
             display: block;
             max-width: 100%;
@@ -45,14 +55,16 @@ const ImageElement = ({ attributes, children, element }: RenderElementProps) => 
   )
 }
 
-const insertImage = (editor: Editor, url: string) => {
+const insertImage = (editor: Editor, entity: string) => {
   const text = { text: '' }
-  const image = { type: 'image', url, children: [text] }
+  const image = { type: 'image', entity, children: [text] }
   Transforms.insertNodes(editor, image)
 }
 
 export function S4() {
-  const editor = useMemo(() => withReact(createEditor()), [])
+  const editor = useMemo(() => withReact(withHistory(createEditor())), [])
+  const [imageStore, setImageStore] = useState({})
+
   const [value, setValue] = useState<Node[]>([
     {
       children: [
@@ -75,19 +87,20 @@ export function S4() {
 
     if (files && files.length > 0) {
       for (const file of files) {
-        const reader = new FileReader()
-        const [mime] = file.type.split('/')
+        setImageStore({
+          ...imageStore,
+          [file.name]: null
+        })
 
-        if (mime === 'image') {
-          reader.addEventListener('load', () => {
-            const url = reader.result?.toString()
-            if (url) {
-              insertImage(editor, url)
-            }
+        insertImage(editor, file.name)
+
+        setTimeout(async () => {
+          const src = await toDataURL(file)
+          setImageStore({
+            ...imageStore,
+            [file.name]: src
           })
-
-          reader.readAsDataURL(file)
-        }
+        }, 3000)
       }
     }
   }
@@ -101,7 +114,9 @@ export function S4() {
         onDrop={(a) => [
           console.log(a)
         ]}
-        renderElement={Element}
+        renderElement={(props) => {
+          return <Element {...props} imageStore={imageStore}/>
+        }}
       />
     </Slate>
 }

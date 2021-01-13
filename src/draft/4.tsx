@@ -1,6 +1,7 @@
 import React, { useCallback } from 'react';
-import {ContentState, Editor, EditorState, DraftHandleValue, AtomicBlockUtils, ContentBlock} from 'draft-js';
+import {ContentState, Editor, EditorState, DraftHandleValue, AtomicBlockUtils, ContentBlock, convertToRaw} from 'draft-js';
 import 'draft-js/dist/Draft.css';
+import { toDataURL } from '../utils/toDataUrl';
 
 function Image(props: any) {
   const block = props.block as ContentBlock
@@ -16,18 +17,6 @@ function Image(props: any) {
   return <div>
     <img alt={data.name} src={data.src}/>
   </div>
-}
-
-async function toDataURL(file: File) {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader()
-    reader.addEventListener('loadend', () => {
-      resolve(reader.result)
-    })
-    reader.readAsDataURL(file)
-    reader.addEventListener('abort', reject)
-    reader.addEventListener('error', reject)
-  })
 }
 
 export function D4() {
@@ -86,6 +75,8 @@ export function D4() {
   }, []);
 
   // Modifier.setBlockType(content)
+  
+  console.log(convertToRaw(editorState.getCurrentContent()))
 
   return <Editor
     handleDroppedFiles={handleDroppedFiles}
