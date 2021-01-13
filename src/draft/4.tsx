@@ -32,7 +32,7 @@ async function toDataURL(file: File) {
 
 export function D4() {
   const [editorState, setEditorState] = React.useState(
-    () => EditorState.createWithContent(ContentState.createFromText('Hello World')),
+    () => EditorState.createWithContent(ContentState.createFromText('Hello there\nDrop an image please')),
   );
 
   const handleDroppedFiles = useCallback((selection, files: File[]) => {
