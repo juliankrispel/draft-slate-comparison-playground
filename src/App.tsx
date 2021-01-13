@@ -12,14 +12,17 @@ import { S1 } from "./slate/1";
 import { S2 } from "./slate/2";
 import { D3 } from "./draft/3";
 import { S3 } from "./slate/3";
+import { D4 } from "./draft/4";
+import { S4 } from "./slate/4";
 
 
-const draft = [D1, D2, D3];
-const slate = [S1, S2, S3];
+const draft = [D1, D2, D3, D4];
+const slate = [S1, S2, S3, S4];
 const steps = [
   'Basic',
   'Basic Text Formatting',
-  'Block Formatting'
+  'Block Formatting',
+  'Transient State'
 ]
 
 export default function App() {
