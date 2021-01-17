@@ -1,12 +1,8 @@
-import React, { useCallback } from 'react';
+import React from 'react';
 import {
   ContentState,
   Editor,
   EditorState,
-  DraftHandleValue,
-  AtomicBlockUtils,
-  ContentBlock,
-  convertToRaw,
   DefaultDraftBlockRenderMap,
 } from 'draft-js';
 import 'draft-js/dist/Draft.css';
