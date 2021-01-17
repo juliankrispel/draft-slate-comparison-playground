@@ -1,6 +1,6 @@
 import React, { FormEvent, useCallback } from 'react'
 import { useMemo, useState } from "react"
-import { Editable, Slate, useEditor, withReact } from 'slate-react'
+import { Editable, Slate, withReact } from 'slate-react'
 import { createEditor, Editor, Node } from "slate"
 import { EditableProps, RenderElementProps, RenderLeafProps } from 'slate-react/dist/components/editable'
 import { headers } from './plugins/headers'
@@ -13,9 +13,7 @@ export type SlatePlugin = Omit<EditableProps, "renderElement" | "renderLeaf">  &
 
 export type SlatePluginFactory = (editor: Editor) => SlatePlugin
 
-function PluginsEditable({ plugins }: {
-  plugins: SlatePlugin[]
-}) {
+function usePlugins(plugins: SlatePlugin[]) {
   const renderElement = useCallback((props: RenderElementProps) => {
     for (const plugin of plugins) {
       if (plugin.renderElement != null) {
@@ -29,7 +27,7 @@ function PluginsEditable({ plugins }: {
     return <p {...rest}>{children}</p>
   }, [plugins])
 
-  const renderLeaf = useCallback((props: RenderLeafProps) => {
+  const renderLeaf = useCallback((props) => {
     for (const plugin of plugins) {
       if (plugin.renderLeaf != null) {
         const content = plugin.renderLeaf(props)
@@ -58,13 +56,12 @@ function PluginsEditable({ plugins }: {
     }
   }, [plugins])
 
-
-  return <Editable
-    renderElement={renderElement}
-    renderLeaf={renderLeaf}
-    onKeyDown={onKeyDown}
-    onBeforeInput={onBeforeInput}
-  />
+  return {
+    renderElement,
+    renderLeaf,
+    onKeyDown,
+    onBeforeInput,
+  }
 }
 
 export function S5() {
@@ -104,15 +101,15 @@ export function S5() {
     }
   ]);
 
+  const plugins = [headers(editor), typography(editor)]
+
   return (
     <Slate
       editor={editor}
       value={value}
       onChange={(newValue) => setValue(newValue)}
     >
-      <PluginsEditable
-        plugins={[headers(editor), typography(editor)]}
-      />
+      <Editable {...usePlugins(plugins)} />
     </Slate>
   );
 }

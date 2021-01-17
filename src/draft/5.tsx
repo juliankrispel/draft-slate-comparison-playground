@@ -1,31 +1,30 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import {
   ContentState,
   Editor,
   EditorState,
   DefaultDraftBlockRenderMap,
+  convertToRaw,
+  convertFromRaw,
 } from 'draft-js';
 import 'draft-js/dist/Draft.css';
+import { typography } from './plugins/typography';
+import { headers } from './plugins/headers';
 
-type Plugin = Omit<Draft.EditorProps, "editorState" | "onChange"> & {
+export type DraftPlugin = Omit<Draft.EditorProps, "editorState" | "onChange"> & {
   onChange?: (editorState: EditorState) => EditorState
 }
 
+export type DraftPluginFactory = (
+  editorState: EditorState,
+  setEditorState: Draft.EditorProps["onChange"],
+) => DraftPlugin
 
-/**
- * composePlugins
- * @description
- * takes a list of plugins and returns EditorProps
- * 
- * @param plugins 
- * @param onChange 
- * @param editorState 
- * 
- */
-const composePlugins = (
-  plugins: Plugin[],
-  onChange: Draft.EditorProps["onChange"],
-): Omit<Draft.EditorProps, "editorState"> => {
+const usePlugins = ({ editorState, setEditorState, plugins }: {
+  editorState: EditorState,
+  setEditorState: Draft.EditorProps["onChange"],
+  plugins: DraftPlugin[],
+}): Draft.EditorProps => {
   let blockRenderMap = DefaultDraftBlockRenderMap
 
   for (const plugin of plugins) {
@@ -35,6 +34,7 @@ const composePlugins = (
   }
 
   return {
+    editorState,
     blockRenderMap,
     onChange(_editorState) {
       let editorState = _editorState
@@ -43,51 +43,7 @@ const composePlugins = (
           editorState = plugin.onChange(editorState)
         }
       }
-      onChange(editorState)
-    },
-    handleBeforeInput(chars, editorState, eventTimeStamp) {
-      for (const plugin of plugins) {
-        if (plugin.handleBeforeInput != null) {
-          const res = plugin.handleBeforeInput(chars, editorState, eventTimeStamp)
-          if (res === 'handled') {
-            return 'handled'
-          }
-        }
-      }
-      return 'not-handled'
-    },
-    handleDrop(...args) {
-      for (const plugin of plugins) {
-        if (plugin.handleDrop != null) {
-          const res = plugin.handleDrop(...args)
-          if (res === 'handled') {
-            return 'handled'
-          }
-        }
-      }
-      return 'not-handled'
-    },
-    handlePastedText(...args) {
-      for (const plugin of plugins) {
-        if (plugin.handlePastedText != null) {
-          const res = plugin.handlePastedText(...args)
-          if (res === 'handled') {
-            return 'handled'
-          }
-        }
-      }
-      return 'not-handled'
-    },
-    handleDroppedFiles(...args) {
-      for (const plugin of plugins) {
-        if (plugin.handleDroppedFiles != null) {
-          const res = plugin.handleDroppedFiles(...args)
-          if (res === 'handled') {
-            return 'handled'
-          }
-        }
-      }
-      return 'not-handled'
+      setEditorState(editorState)
     },
     handleKeyCommand(...args) {
       for (const plugin of plugins) {
@@ -100,38 +56,80 @@ const composePlugins = (
       }
       return 'not-handled'
     },
-    handlePastedFiles(...args) {
+    blockRendererFn(...args) {
       for (const plugin of plugins) {
-        if (plugin.handlePastedFiles != null) {
-          const res = plugin.handlePastedFiles(...args)
-          if (res === 'handled') {
-            return 'handled'
+        if (plugin.blockRendererFn != null) {
+          const res = plugin.blockRendererFn(...args)
+          if (res != null) {
+            return res
           }
         }
       }
-      return 'not-handled'
     },
-    handleReturn(...args) {
-      for (const plugin of plugins) {
-        if (plugin.handleReturn != null) {
-          const res = plugin.handleReturn(...args)
-          if (res === 'handled') {
-            return 'handled'
-          }
-        }
-      }
-      return 'not-handled'
-    }
+
   };
 };
 
 export function D5() {
+  const raw = {
+    "blocks": [
+      {
+        "key": "1",
+        "text": "Header One",
+        "type": "h1",
+        "depth": 0,
+        "inlineStyleRanges": [],
+        "entityRanges": [],
+        "data": {}
+      },
+      {
+        "key": "2",
+        "text": "Header Two",
+        "type": "h2",
+        "depth": 0,
+        "inlineStyleRanges": [],
+        "entityRanges": [],
+        "data": {}
+      },
+      {
+        "key": "3",
+        "text": "Header Three",
+        "type": "h3",
+        "depth": 0,
+        "inlineStyleRanges": [],
+        "entityRanges": [],
+        "data": {}
+      },
+      {
+        "key": "4",
+        "text": "Plain Text",
+        "type": "unstyled",
+        "depth": 0,
+        "inlineStyleRanges": [],
+        "entityRanges": [],
+        "data": {}
+      }
+
+    ],
+    "entityMap": {}
+  }
+
   const [editorState, setEditorState] = React.useState(
-    () => EditorState.createWithContent(ContentState.createFromText('Hello there\nDrop an image please')),
+    () => EditorState.createWithContent(convertFromRaw(raw)),
   );
 
-  return <Editor
-    editorState={editorState}
-    onChange={setEditorState}
-  />
+  console.log(JSON.stringify(convertToRaw(editorState.getCurrentContent()), null, 2))
+
+  return (
+    <Editor
+      {...usePlugins({
+        editorState,
+        setEditorState,
+        plugins: [
+          typography(editorState, setEditorState),
+          headers(),
+        ],
+      })}
+    />
+  );
 }
