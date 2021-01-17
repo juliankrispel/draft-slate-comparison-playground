@@ -118,8 +118,6 @@ export function D5() {
     () => EditorState.createWithContent(convertFromRaw(raw)),
   );
 
-  console.log(JSON.stringify(convertToRaw(editorState.getCurrentContent()), null, 2))
-
   return (
     <Editor
       {...usePlugins({

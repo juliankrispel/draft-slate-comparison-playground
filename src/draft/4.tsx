@@ -65,13 +65,11 @@ export function D4() {
   }, [editorState])
 
   const blockRendererFn = useCallback((block) => {
-    console.log("hello", block.getType());
     if (block.getType() === "atomic") {
       return {
         component: Image,
       };
     }
-    console.log(block.getType());
   }, []);
 
   // Modifier.setBlockType(content)

@@ -16,16 +16,18 @@ import { D4 } from "./draft/4";
 import { S4 } from "./slate/4";
 import { D5 } from "./draft/5";
 import { S5 } from "./slate/5";
+import { D6 } from "./draft/6";
+import { S6 } from "./slate/6";
 
-
-const draft = [D1, D2, D3, D4, D5];
-const slate = [S1, S2, S3, S4, S5];
+const draft = [D1, D2, D3, D4, D5, D6];
+const slate = [S1, S2, S3, S4, S5, S6];
 const steps = [
   'Basic',
   'Basic Text Formatting',
   'Block Formatting',
   'Transient State',
-  'Plugins',
+  'Plugin Implementation',
+  'Hooks',
 ]
 
 export default function App() {
