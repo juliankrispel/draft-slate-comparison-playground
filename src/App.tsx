@@ -32,7 +32,7 @@ const steps = [
 
 export default function App() {
   return (
-    <Router>
+    <Router basename="/draft-slate-comparison-playground">
       <div>
         <table>
           <thead>
