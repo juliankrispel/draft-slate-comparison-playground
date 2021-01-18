@@ -1,6 +1,5 @@
-import React, { useCallback } from 'react';
-import ReactDOM from 'react-dom';
-import {ContentBlock, ContentState, Editor, EditorState, Modifier, RichUtils, EditorBlock} from 'draft-js';
+import React from 'react';
+import {ContentState, Editor, EditorState, Modifier, EditorBlock} from 'draft-js';
 import 'draft-js/dist/Draft.css';
 
 export function D3() {

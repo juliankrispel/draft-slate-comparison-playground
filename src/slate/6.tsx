@@ -1,12 +1,14 @@
 import React from 'react'
 import { useMemo, useState } from "react"
 import { Editable, Slate, withReact } from 'slate-react'
-import { createEditor, Editor, Node } from "slate"
+import { createEditor, Node } from "slate"
 import { EditableProps } from 'slate-react/dist/components/editable'
 import { useTypography } from './hooks/useTypography'
 import { useBlockMenu } from './hooks/useBlockMenu'
 
 export type EditablePropsHook = () => EditableProps
+
+
 
 function EditableWithContext() {
   return <Editable
@@ -16,7 +18,6 @@ function EditableWithContext() {
 }
 
 export function S6() {
-
   const editor = useMemo(() => withReact(createEditor()), [])
   const [value, setValue] = useState<Node[]>([
     {

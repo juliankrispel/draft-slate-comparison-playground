@@ -1,5 +1,4 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
 import {ContentState, Editor, EditorState} from 'draft-js';
 import 'draft-js/dist/Draft.css';
 

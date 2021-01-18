@@ -1,7 +1,7 @@
-import React, { CSSProperties, useCallback } from 'react'
+import React, { useCallback } from 'react'
 import { useMemo, useState } from "react"
-import { Editable, RenderElementProps, RenderLeafProps, Slate, withReact } from 'slate-react'
-import { createEditor, Editor, Node, Transforms } from "slate"
+import { Editable, RenderElementProps, Slate, withReact } from 'slate-react'
+import { createEditor, Node, Transforms } from "slate"
 
 export function S3() {
   const editor = useMemo(() => withReact(createEditor()), [])

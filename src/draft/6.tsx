@@ -1,10 +1,26 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import {convertFromRaw, Editor, EditorProps, EditorState} from 'draft-js';
 import 'draft-js/dist/Draft.css';
 import { useTypography } from './hooks/useTypography';
 import { useBlockMenu } from './hooks/useBlockMenu';
 
 export type DraftEditorHook = (editorState: EditorState, setEditorState: EditorProps["onChange"]) => Omit<EditorProps, "editorState" | "onChange">
+
+export const EditorContext = React.createContext({
+  editorState: EditorState.createEmpty(),
+  setEditorState: (editorState: EditorState) => {},
+  getEditorState: () => EditorState.createEmpty(),
+});
+
+export function EditorWithProps(){
+  const { editorState, setEditorState } = useContext(EditorContext)
+
+  return <Editor
+    {...useTypography()}
+    {...useBlockMenu()}
+    {...{ editorState, onChange: setEditorState }}
+  />
+}
 
 export function D6() {
   const raw = {
@@ -54,9 +70,13 @@ export function D6() {
     () => EditorState.createWithContent(convertFromRaw(raw)),
   );
 
-  return <Editor
-    {...useTypography(editorState, setEditorState)}
-    {...useBlockMenu(editorState, setEditorState)}
-    {...{editorState, onChange: setEditorState}}
-  />;
+  const getEditorState = () => {
+    return editorState
+  }
+
+  return (
+    <EditorContext.Provider value={{ editorState, setEditorState, getEditorState }}>
+      <EditorWithProps />
+    </EditorContext.Provider>
+  );
 }

@@ -1,4 +1,4 @@
-import React, { FormEvent, useCallback } from 'react'
+import React, { useCallback } from 'react'
 import { useMemo, useState } from "react"
 import { Editable, Slate, withReact } from 'slate-react'
 import { createEditor, Editor, Node } from "slate"

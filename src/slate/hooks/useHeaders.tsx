@@ -1,8 +1,6 @@
-import { Editor } from "slate"
 import { RenderElementProps } from "slate-react"
-import { EditablePropsHook } from "../6"
 
-export const useHeaders = (editor: Editor) => {
+export const useHeaders = () => {
   return {
     renderElement: (props: RenderElementProps) => {
       if (props.element.type === 'h1') {

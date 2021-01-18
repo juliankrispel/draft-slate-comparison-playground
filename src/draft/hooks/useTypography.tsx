@@ -1,9 +1,11 @@
-import { RichUtils } from "draft-js";
-import { DraftEditorHook } from "../6";
+import { EditorState, RichUtils } from "draft-js";
+import { useContext } from "react";
+import { EditorContext } from "../6";
 
-export const useTypography: DraftEditorHook = ( editorState, setEditorState) => {
+export const useTypography = () => {
+  const { setEditorState } = useContext(EditorContext)
   return {
-    handleKeyCommand: (command, editorState) => {
+    handleKeyCommand: (command: string, editorState: EditorState) => {
       const newState = RichUtils.handleKeyCommand(editorState, command);
 
       if (newState) {

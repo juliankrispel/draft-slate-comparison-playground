@@ -1,5 +1,4 @@
 import React, { useCallback } from 'react';
-import ReactDOM from 'react-dom';
 import {ContentState, Editor, EditorState, RichUtils} from 'draft-js';
 import 'draft-js/dist/Draft.css';
 
